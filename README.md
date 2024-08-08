@@ -53,7 +53,9 @@ To run the Chronista command-line interface (CLI), use one of the following comm
 ```bash
 make run
 ```
+
 or
+
 ```bash
 make chronista_cli && ./bin/chronista_cli
 ```
@@ -62,12 +64,12 @@ make chronista_cli && ./bin/chronista_cli
 
 To compile and run the tests, follow these steps:
 
-1. Compile the test binary: `make chronista_test`
-2. Run the tests using one of the following commands:
-    - Using `ctest`: `ctest`
-    - Using `make`: `make test`
-    - Directly executing the test binary to view the native doctest output: `./bin/chronista_tests`
+1. Compile the test binary: `make chronista_tests`
+1. Run the tests using one of the following commands:
+   - Using `ctest`: `ctest`
+   - Using `make`: `make test`
+   - Directly executing the test binary to view the native doctest output: `./bin/chronista_tests`
 
-## License 
+## License
 
 This project is licensed under the [GNU General Public License v3.0 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.en.html).
