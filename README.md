@@ -24,7 +24,7 @@ To build and run the project, ensure you have the following installed:
 
 - **Compiler**: `clang++`
 - **Build System**: `CMake` and `make`
-- **Testing Framework**: `doctest` and `ctest` (optional)
+- **Testing Framework**: `ctest` (optional)
 
 ### Building the Project
 
@@ -68,7 +68,7 @@ To compile and run the tests, follow these steps:
 1. Run the tests using one of the following commands:
    - Using `ctest`: `ctest`
    - Using `make`: `make test`
-   - Directly executing the test binary to view the native doctest output: `./bin/chronista_tests`
+   - Directly executing the test binary to view the native [doctest](https://github.com/doctest/doctest) output: `./bin/chronista_tests`
 
 ## License
 
