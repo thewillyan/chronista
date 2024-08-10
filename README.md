@@ -22,7 +22,7 @@ the operations within that schedule.
 
 To build and run the project, ensure you have the following installed:
 
-- **Compiler**: `clang++`
+- **Compiler**: `clang++`, `gcc` or `cl`
 - **Build System**: `CMake` and `make`
 - **Testing Framework**: `ctest` (optional)
 
