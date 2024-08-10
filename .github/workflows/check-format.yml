@@ -1,0 +1,20 @@
+name: Check Format
+on:
+  push:
+    branches: ["main", "dev"]
+  pull_request:
+    branches: ["main", "dev"]
+jobs:
+  check-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check code formatting with clang-format
+        run: |
+          echo "Checking code formatting..."
+          files=$(find . -name "*.cpp" -o -name "*.hpp")
+          if [ -z "$files" ]; then
+            echo "No C++ files found."
+          else
+            clang-format -n -Werror --style=LLVM $files
+          fi
