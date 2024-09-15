@@ -16,6 +16,26 @@ namespace chronista
         adjacency_lists[source].push_front(target);
     }
 
+    void WaitForGraph::remove_node(unsigned int node)
+    {
+        if (adjacency_lists.erase(node) > 0)
+        {
+            for (auto &node_list_pair : adjacency_lists)
+            {
+                node_list_pair.second.remove(node);
+            }
+        }
+    }
+
+    void WaitForGraph::remove_arc(unsigned int source, unsigned int target)
+    {
+        const auto &node_list_pair_it = adjacency_lists.find(source);
+        if (node_list_pair_it != adjacency_lists.end())
+        {
+            node_list_pair_it->second.remove(target);
+        }
+    }
+
     std::vector<unsigned int> WaitForGraph::find_deadlock_nodes() const
     {
         std::map<unsigned int, NodeInfoDFS> nodes_info;

@@ -11,7 +11,7 @@ namespace chronista
 
     class WaitForGraph
     {
-    public:
+    private:
         std::map<unsigned int, std::forward_list<unsigned int>> adjacency_lists;
 
         enum NodeStatusDFS
@@ -34,6 +34,14 @@ namespace chronista
         // Adds a directed arc from 'source' to 'target' in the graph.
         // If either 'source' or 'target' nodes do not exist, they are automatically added.
         void add_arc(unsigned int source, unsigned int target);
+
+        // Removes a node from the graph.
+        // If the node does not exist, no changes are made.
+        void remove_node(unsigned int node);
+
+        // Removes a directed arc from 'source' to 'target' in the graph.
+        // If either 'source' or 'target' nodes do not exist, no changes are made.
+        void remove_arc(unsigned int source, unsigned int target);
 
         // Return a std::vector containing nodes involved in a cycle.
         // If no cycle is detected, an empty std::vector is returned.
