@@ -4,19 +4,16 @@
 namespace chronista
 {
 
-    WaitForGraph::WaitForGraph()
+    void WaitForGraph::add_node(unsigned int node)
     {
-        adjacency_lists[10] = {15};
-        adjacency_lists[15] = {98};
-        adjacency_lists[22] = {33};
-        adjacency_lists[29] = {55};
-        adjacency_lists[32] = {10, 29};
-        adjacency_lists[55] = {98};
-        adjacency_lists[98] = {22, 33};
+        adjacency_lists.emplace(node, std::forward_list<unsigned int>{});
+    }
 
-        // Cycle
-        adjacency_lists[33] = {29};
-        adjacency_lists[55] = {10};
+    void WaitForGraph::add_arc(unsigned int source, unsigned int target)
+    {
+        adjacency_lists.emplace(source, std::forward_list<unsigned int>{});
+        adjacency_lists.emplace(target, std::forward_list<unsigned int>{});
+        adjacency_lists[source].push_front(target);
     }
 
     std::vector<unsigned int> WaitForGraph::find_deadlock_nodes() const
