@@ -13,3 +13,6 @@ CMakeUserPresets.json
 
 .cache
 bin
+.cmake
+
+.vscode
