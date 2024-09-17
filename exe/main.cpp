@@ -1,8 +1,3 @@
-#include "chronista/fact.hpp"
 #include <iostream>
 
-int main() {
-  const long int x{0};
-  std::cout << x << "! = " << fact(x) << std::endl;
-  return 0;
-}
+int main() { std::cout << "Welcome to Chronista v0.1" << std::endl; }
