@@ -2,7 +2,7 @@
 #define CHRONISTA_OPERATION
 
 namespace chronista {
-enum OperationType : unsigned int { Read, Write, Commit };
+enum OperationType : unsigned int { Read, Write, Commit, UpdateLock };
 enum Granularity : unsigned int { DB, File, Table, Tuple, Index, None };
 
 class Operation {

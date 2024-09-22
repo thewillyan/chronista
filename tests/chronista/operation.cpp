@@ -21,6 +21,14 @@ TEST_CASE("Tests the operation class") {
     CHECK(operation2->get_transaction_id() == 2);
     CHECK(operation2->get_granularity() == chronista::Granularity::None);
     CHECK(operation2->get_operation_string() == "c2");
+    
+    std::string operation_data3 = "T1: ul(a.b.c.d.e)";
+    chronista::Operation *operation3 =
+        new chronista::Operation(operation_data3);
+    CHECK(operation3->get_operation() == chronista::OperationType::UpdateLock);
+    CHECK(operation3->get_transaction_id() == 1);
+    CHECK(operation3->get_granularity() == chronista::Granularity::Index);
+    CHECK(operation3->get_operation_string() == "ul1(a.b.c.d.e)");
   }
 
   SUBCASE("Should throw an exception for invalid operation format") {

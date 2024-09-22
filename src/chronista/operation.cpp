@@ -2,6 +2,7 @@
 #include <string>
 
 #include "chronista/operation.hpp"
+#include <iostream>
 
 using namespace chronista;
 
@@ -9,7 +10,7 @@ Operation::Operation(std::string operation) {
   if (!std::regex_match(
           operation,
           std::regex(
-              "^T[0-9]+: [rw]\\([a-zA-Z0-9]+(\\.[a-zA-Z0-9]+){0,4}\\)$")) &&
+              "^T[0-9]+: (r|w|ul)\\([a-zA-Z0-9]+(\\.[a-zA-Z0-9]+){0,4}\\)$")) &&
       !std::regex_match(operation, std::regex("^T[0-9]+: c$"))) {
     throw std::invalid_argument("Invalid operation format");
   }
@@ -21,14 +22,17 @@ Operation::Operation(std::string operation) {
 std::tuple<OperationType, int, Granularity>
 Operation::parse_operation(std::string operation) {
   std::string operation_type_token =
-      operation.substr(operation.find(":") + 2, 1);
+      operation.substr(
+      operation.find(":") + 2, operation.find("(") - operation.find(":") - 2);
   OperationType operation_type;
   if (operation_type_token == "c") {
     operation_type = OperationType::Commit;
   } else if (operation_type_token == "r") {
     operation_type = OperationType::Read;
-  } else {
+  } else if (operation_type_token == "w") {
     operation_type = OperationType::Write;
+  } else {
+    operation_type = OperationType::UpdateLock;
   }
   std::string transaction_id_token =
       operation.substr(1, operation.find(":") - 1);
@@ -68,7 +72,8 @@ Operation::parse_operation(std::string operation) {
 std::string Operation::to_string(std::string operation) {
   std::string operation_type_string;
   std::string operation_type_token =
-      operation.substr(operation.find(":") + 2, 1);
+      operation.substr(
+      operation.find(":") + 2, operation.find("(") - operation.find(":") - 2);
   std::string transaction_id_token =
       operation.substr(1, operation.find(":") - 1);
   if (operation_type_token == "c") {
