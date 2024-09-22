@@ -15,6 +15,7 @@ Operation::Operation(const std::string operation)
         this->operation_type,
         this->transaction_id,
         this->granularity) = this->parse_operation(operation);
+    this->operation_string = this->to_string(operation);
 }
 
 std::tuple<OperationType, int, Granularity> Operation::parse_operation(std::string operation)
@@ -70,6 +71,19 @@ std::tuple<OperationType, int, Granularity> Operation::parse_operation(std::stri
     return std::make_tuple(operation_type, transaction_id, granularity_type);
 }
 
+std::string Operation::to_string(std::string operation)
+{
+    std::string operation_type_string;
+    std::string operation_type_token = operation.substr(operation.find(":") + 2, 1);
+    std::string transaction_id_token = operation.substr(1, operation.find(":") - 1);
+    if (operation_type_token == "c")
+    {
+        return operation_type_token + transaction_id_token;
+    }
+    std::string granularity_token = operation.substr(operation.find("(") + 1, operation.find(")") - operation.find("(") - 1);
+    return operation_type_token + transaction_id_token + "(" + granularity_token + ")";
+}
+
 OperationType Operation::get_operation()
 {
     return this->operation_type;
@@ -83,4 +97,9 @@ int Operation::get_transaction_id()
 Granularity Operation::get_granularity()
 {
     return this->granularity;
+}
+
+std::string Operation::get_operation_string()
+{
+    return this->operation_string;
 }
