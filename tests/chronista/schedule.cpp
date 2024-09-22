@@ -32,6 +32,4 @@ TEST_CASE("Tests the schedule class") {
     CHECK(schedule3->size() == 3);
     CHECK(schedule3->to_string() == "r1(a.b.c.d)w2(a.b)c1");
   }
-
-  SUBCASE("Should not create a schedule") {}
 }
