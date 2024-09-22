@@ -1,15 +1,21 @@
 #ifndef CHRONISTA_OPERATION
 #define CHRONISTA_OPERATION
 
+#include <variant>
+#include <vector>
+
 namespace chronista {
-enum OperationType : unsigned int { Read, Write, Commit, UpdateLock };
-enum Granularity : unsigned int { DB, File, Table, Tuple, Index, None };
+enum class OperationType : unsigned int { Read, Write, Commit, UpdateLock };
+enum class Granularity : unsigned int { Database, Table, Page, Tuple, None };
 
 class Operation {
 private:
   OperationType operation_type;
   int transaction_id;
   Granularity granularity;
+  std::vector<std::tuple<Granularity, unsigned int>> full_resource_path;
+  unsigned int resource;
+
   std::string operation_string;
   /// @brief Parse the operation string
   /// @param operation String to be parsed. Example: "T1: r(a.b.c)"
@@ -28,6 +34,14 @@ public:
   Granularity get_granularity();
   /// @brief Getter for operation_string
   std::string get_operation_string();
+  /// @brief Getter for full_resource_path
+  std::vector<std::tuple<Granularity, unsigned int>> get_full_resource_path();
+  /// @brief Getter for resource
+  unsigned int get_resource();
+  /// @brief Set the full_resource_path attribute
+  void set_full_resource_path(std::string operation);
+  /// @brief Set the resource attribute
+  void set_resource(std::string operation);
   /// @brief Convert the operation to a string. Example: "T1: r(a.b.c)" ->
   /// "r1(a.b.c)"
   static std::string to_string(std::string operation);

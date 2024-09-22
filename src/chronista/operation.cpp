@@ -9,20 +9,27 @@ using namespace chronista;
 Operation::Operation(std::string operation) {
   if (!std::regex_match(
           operation,
-          std::regex(
-              "^T[0-9]+: (r|w|ul)\\([a-zA-Z0-9]+(\\.[a-zA-Z0-9]+){0,4}\\)$")) &&
+          std::regex("^T[0-9]+: (r|w|ul)\\([0-9]+(\\.[0-9]+){0,3}\\)$")) &&
       !std::regex_match(operation, std::regex("^T[0-9]+: c$"))) {
     throw std::invalid_argument("Invalid operation format");
   }
   std::tie(this->operation_type, this->transaction_id, this->granularity) =
       this->parse_operation(operation);
+  if (this->operation_type == OperationType::Commit) {
+    this->full_resource_path =
+        std::vector<std::tuple<chronista::Granularity, unsigned int>>();
+    this->resource = NULL;
+  } else {
+    this->set_full_resource_path(operation);
+    this->set_resource(operation);
+  }
+
   this->operation_string = this->to_string(operation);
 }
 
 std::tuple<OperationType, int, Granularity>
 Operation::parse_operation(std::string operation) {
-  std::string operation_type_token =
-      operation.substr(
+  std::string operation_type_token = operation.substr(
       operation.find(":") + 2, operation.find("(") - operation.find(":") - 2);
   OperationType operation_type;
   if (operation_type_token == "c") {
@@ -51,19 +58,16 @@ Operation::parse_operation(std::string operation) {
   Granularity granularity_type;
   switch (count) {
   case 0:
-    granularity_type = Granularity::DB;
+    granularity_type = Granularity::Database;
     break;
   case 1:
-    granularity_type = Granularity::File;
+    granularity_type = Granularity::Table;
     break;
   case 2:
-    granularity_type = Granularity::Table;
+    granularity_type = Granularity::Page;
     break;
   case 3:
     granularity_type = Granularity::Tuple;
-    break;
-  case 4:
-    granularity_type = Granularity::Index;
     break;
   }
   return std::make_tuple(operation_type, transaction_id, granularity_type);
@@ -71,8 +75,7 @@ Operation::parse_operation(std::string operation) {
 
 std::string Operation::to_string(std::string operation) {
   std::string operation_type_string;
-  std::string operation_type_token =
-      operation.substr(
+  std::string operation_type_token = operation.substr(
       operation.find(":") + 2, operation.find("(") - operation.find(":") - 2);
   std::string transaction_id_token =
       operation.substr(1, operation.find(":") - 1);
@@ -92,3 +95,45 @@ int Operation::get_transaction_id() { return this->transaction_id; }
 Granularity Operation::get_granularity() { return this->granularity; }
 
 std::string Operation::get_operation_string() { return this->operation_string; }
+
+std::vector<std::tuple<chronista::Granularity, unsigned int>>
+Operation::get_full_resource_path() {
+  return this->full_resource_path;
+}
+
+unsigned int Operation::get_resource() { return this->resource; }
+
+void Operation::set_full_resource_path(std::string operation) {
+  std::string granularity_token = operation.substr(
+      operation.find("(") + 1, operation.find(")") - operation.find("(") - 1);
+  std::vector<std::tuple<chronista::Granularity, unsigned int>> full_resource_path;
+  std::string resource_token;
+  for (char ch : granularity_token) {
+    if (ch == '.') {
+      full_resource_path.push_back(
+          std::make_tuple(static_cast<Granularity>(full_resource_path.size()),
+                          std::stoi(resource_token)));
+      resource_token = "";
+    } else {
+      resource_token += ch;
+    }
+  }
+  full_resource_path.push_back(
+      std::make_tuple(static_cast<Granularity>(full_resource_path.size()),
+                      std::stoi(resource_token)));
+  this->full_resource_path = full_resource_path;
+}
+
+void Operation::set_resource(std::string operation) {
+  std::string granularity_token = operation.substr(
+      operation.find("(") + 1, operation.find(")") - operation.find("(") - 1);
+  std::string resource_token;
+  for (char ch : granularity_token) {
+    if (ch == '.') {
+      resource_token = "";
+    } else {
+      resource_token += ch;
+    }
+  }
+  this->resource = std::stoi(resource_token);
+}
