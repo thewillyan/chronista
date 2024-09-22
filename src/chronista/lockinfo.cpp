@@ -3,15 +3,17 @@
 
 using namespace chronista;
 
-LockInfoTuple::LockInfoTuple(unsigned int database_id, RscType resource_type,
-                             unsigned int transaction_id, ReqStatus status,
-                             LockType lock_type)
-    : id{li_id++}, db_id{database_id}, rsc_type{resource_type},
-      req_tid{transaction_id}, req_status{status}, req_lock_type{lock_type} {}
+LockInfoTuple::LockInfoTuple(unsigned int database_id, unsigned int resource_id,
+                             RscType resource_type, unsigned int transaction_id,
+                             ReqStatus status, LockType lock_type)
+    : id{li_id++}, db_id{database_id}, rsc_id{resource_id},
+      rsc_type{resource_type}, req_tid{transaction_id}, req_status{status},
+      req_lock_type{lock_type} {}
 
 unsigned int LockInfoTuple::get_id() const { return id; }
 ReqStatus LockInfoTuple::get_status() const { return req_status; }
 unsigned int LockInfoTuple::get_db_id() const { return db_id; }
+unsigned int LockInfoTuple::get_rsc_id() const { return rsc_id; }
 unsigned int LockInfoTuple::get_trans_id() const { return req_tid; };
 LockType LockInfoTuple::get_lock_type() const { return req_lock_type; }
 RscType LockInfoTuple::get_rsc_type() const { return rsc_type; }
@@ -26,9 +28,8 @@ void LockInfoTuple::status_waiting() { req_status = ReqStatus::Waiting; }
 void LockInfoTuple::status_converting() { req_status = ReqStatus::Converting; }
 
 // convert to certify lock
-void LockInfoTuple::convert_to_certify() {
-  req_lock_type = LockType::Certify;
-  req_status = ReqStatus::Granted;
+void LockInfoTuple::set_lock_type(LockType lock_type) {
+  req_lock_type = lock_type;
 }
 
 LockInfo::LockInfo()
@@ -52,7 +53,7 @@ void LockInfo::rm(unsigned int const lock_id) { tuples.erase(lock_id); }
 
 // Get all the locks from the given transaction
 std::vector<std::shared_ptr<LockInfoTuple>>
-LockInfo::get_transaction_locks(const unsigned int &trans_id) {
+LockInfo::get_transaction_locks(const unsigned int &trans_id) const {
   std::vector<std::shared_ptr<LockInfoTuple>> v{};
   for (const auto &pair : tuples) {
     const std::shared_ptr<LockInfoTuple> &tuple_ptr = pair.second;
@@ -75,4 +76,22 @@ void LockInfo::rm_transaction_locks(const unsigned int &trans_id) {
   for (const unsigned int &k : to_rm) {
     tuples.erase(k);
   }
+}
+
+// Get all the locks from a given resource
+std::vector<std::shared_ptr<LockInfoTuple>>
+LockInfo::get_rsc_locks(const unsigned int database_id,
+                        const unsigned int resource_id,
+                        const RscType resource_type) const {
+  std::vector<std::shared_ptr<LockInfoTuple>> v{};
+  for (const auto &pair : tuples) {
+    const std::shared_ptr<LockInfoTuple> &tuple_ptr = pair.second;
+    bool is_from_rsc = tuple_ptr->get_db_id() == database_id &&
+                       tuple_ptr->get_rsc_id() == resource_id &&
+                       tuple_ptr->get_rsc_type() == resource_type;
+    if (is_from_rsc) {
+      v.emplace_back(tuple_ptr);
+    }
+  }
+  return v;
 }

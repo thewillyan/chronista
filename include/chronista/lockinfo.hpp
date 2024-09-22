@@ -8,11 +8,10 @@
 
 namespace chronista {
 enum RscType : unsigned int {
-  DB,
-  File,
+  Database,
   Table,
+  Page,
   Tuple,
-  Index,
 };
 
 enum ReqStatus : unsigned int {
@@ -25,6 +24,11 @@ enum LockType : unsigned int {
   Read,
   Write,
   Certify,
+  Update,
+  IRead,
+  IWrite,
+  ICertify,
+  IUpdate,
 };
 
 class LockInfoTuple {
@@ -34,18 +38,20 @@ private:
 
   const unsigned int id;
   const unsigned int db_id;
+  const unsigned int rsc_id;
   const RscType rsc_type;
   const unsigned int req_tid;
   ReqStatus req_status;
   LockType req_lock_type;
 
 public:
-  LockInfoTuple(unsigned int database_id, RscType resource_type,
-                unsigned int transaction_id, ReqStatus status,
-                LockType lock_type);
+  LockInfoTuple(unsigned int database_id, unsigned int resource_id,
+                RscType resource_type, unsigned int transaction_id,
+                ReqStatus status, LockType lock_type);
   unsigned int get_id() const;
   ReqStatus get_status() const;
   unsigned int get_db_id() const;
+  unsigned int get_rsc_id() const;
   unsigned int get_trans_id() const;
   LockType get_lock_type() const;
   RscType get_rsc_type() const;
@@ -58,7 +64,7 @@ public:
   void status_converting();
 
   // convert to certify lock
-  void convert_to_certify();
+  void set_lock_type(LockType lock_type);
 };
 
 class LockInfo {
@@ -69,17 +75,22 @@ public:
   LockInfo();
 
   // Get the lock with the given id
-  std::shared_ptr<LockInfoTuple> &get(unsigned int const lock_id);
+  std::shared_ptr<LockInfoTuple> &get(const unsigned int lock_id);
   // Add a lock and returns its ID
   unsigned int add(const std::shared_ptr<LockInfoTuple> &tuple);
   // Remove the lock with the given ID
-  void rm(unsigned int const lock_id);
+  void rm(const unsigned int lock_id);
 
   // Get all the locks from the given transaction
   std::vector<std::shared_ptr<LockInfoTuple>>
-  get_transaction_locks(const unsigned int &trans_id);
+  get_transaction_locks(const unsigned int &trans_id) const;
   // Remove all locks from the given transaction
   void rm_transaction_locks(const unsigned int &trans_id);
+
+  // Get all the locks from a given resource
+  std::vector<std::shared_ptr<LockInfoTuple>>
+  get_rsc_locks(const unsigned int database_id, const unsigned int resource_id,
+                const RscType resource_type) const;
 };
 } // namespace chronista
 
