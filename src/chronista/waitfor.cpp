@@ -1,5 +1,6 @@
 #include "chronista/waitfor.hpp"
 #include <stack>
+#include <algorithm>
 
 namespace chronista {
 
@@ -10,7 +11,10 @@ void WaitForGraph::add_node(unsigned int node) {
 void WaitForGraph::add_arc(unsigned int source, unsigned int target) {
   adjacency_lists.emplace(source, std::forward_list<unsigned int>{});
   adjacency_lists.emplace(target, std::forward_list<unsigned int>{});
-  adjacency_lists[source].push_front(target);
+
+  if (std::find(adjacency_lists[source].begin(), adjacency_lists[source].end(), target) == adjacency_lists[source].end()) {
+    adjacency_lists[source].push_front(target);
+  }
 }
 
 void WaitForGraph::remove_node(unsigned int node) {

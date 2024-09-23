@@ -6,7 +6,7 @@
 
 using namespace chronista;
 
-Operation::Operation(std::string operation) {
+Operation::Operation(std::string operation) : was_scheduled(false) {
   if (!std::regex_match(
           operation,
           std::regex("^T[0-9]+: (r|w|ul)\\([0-9]+(\\.[0-9]+){0,3}\\)$")) &&
@@ -88,20 +88,20 @@ std::string Operation::to_string(std::string operation) {
          ")";
 }
 
-OperationType Operation::get_operation() { return this->operation_type; }
+OperationType Operation::get_operation() const { return this->operation_type; }
 
-int Operation::get_transaction_id() { return this->transaction_id; }
+int Operation::get_transaction_id() const { return this->transaction_id; }
 
-Granularity Operation::get_granularity() { return this->granularity; }
+Granularity Operation::get_granularity() const { return this->granularity; }
 
-std::string Operation::get_operation_string() { return this->operation_string; }
+std::string Operation::get_operation_string() const { return this->operation_string; }
 
 std::vector<std::tuple<chronista::Granularity, unsigned int>>
-Operation::get_full_resource_path() {
+Operation::get_full_resource_path() const {
   return this->full_resource_path;
 }
 
-unsigned int Operation::get_resource() { return this->resource; }
+unsigned int Operation::get_resource() const { return this->resource; }
 
 void Operation::set_full_resource_path(std::string operation) {
   std::string granularity_token = operation.substr(
@@ -136,4 +136,14 @@ void Operation::set_resource(std::string operation) {
     }
   }
   this->resource = std::stoi(resource_token);
+}
+
+bool Operation::get_was_scheduled() {
+  return this->was_scheduled;
+}
+
+void Operation::set_was_scheduled (bool ws) {
+
+  this->was_scheduled = ws;
+
 }
