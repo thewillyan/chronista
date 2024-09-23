@@ -6,7 +6,7 @@
 
 using namespace chronista;
 
-Operation::Operation(std::string operation) {
+Operation::Operation(std::string operation) : was_scheduled(false) {
   if (!std::regex_match(
           operation,
           std::regex("^T[0-9]+: (r|w|ul)\\([0-9]+(\\.[0-9]+){0,3}\\)$")) &&
@@ -136,4 +136,14 @@ void Operation::set_resource(std::string operation) {
     }
   }
   this->resource = std::stoi(resource_token);
+}
+
+bool Operation::get_was_scheduled() {
+  return this->was_scheduled;
+}
+
+void Operation::set_was_scheduled (bool ws) {
+
+  this->was_scheduled = ws;
+
 }

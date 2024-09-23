@@ -15,6 +15,7 @@ private:
   Granularity granularity;
   std::vector<std::tuple<Granularity, unsigned int>> full_resource_path;
   unsigned int resource;
+  bool was_scheduled;
 
   std::string operation_string;
   /// @brief Parse the operation string
@@ -45,6 +46,9 @@ public:
   /// @brief Convert the operation to a string. Example: "T1: r(a.b.c)" ->
   /// "r1(a.b.c)"
   static std::string to_string(std::string operation);
+  /// @brief Getter for the was_scheduled
+  bool get_was_scheduled();
+  void set_was_scheduled (bool ws);
 };
 } // namespace chronista
 

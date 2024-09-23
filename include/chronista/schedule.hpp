@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <forward_list>
 
 #include "operation.hpp"
 using namespace std;
@@ -33,7 +34,7 @@ public:
   /// @brief Parse the input stream to create the schedule vector
   std::vector<Operation> parse(std::istream &input);
   /// @brief Remove the most recent transaction from the schedule
-  void remove_most_recent_transaction(std::vector<int> transaction_ids);
+  unsigned int remove_most_recent_transaction(std::vector<unsigned int> transaction_ids, std::forward_list<unsigned int>& transaction_chronology);
   /// @brief Set the transaction_ids attribute
   void set_transaction_ids(int transaction_id);
   /// @brief Getter for the transaction_ids attribute

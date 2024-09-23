@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include <istream>
+#include <forward_list>
 using namespace chronista;
 
 Schedule::Schedule() { this->schedule = std::vector<Operation>(); }
@@ -35,15 +36,40 @@ std::vector<Operation> Schedule::parse(std::istream &input) {
 
 std::vector<Operation> Schedule::get_schedule() { return this->schedule; }
 
-void Schedule::remove_most_recent_transaction(
-    std::vector<int> transaction_ids) {
-  unsigned int most_recent_transaction_id = this->get_transaction_ids().back();
+unsigned int Schedule::remove_most_recent_transaction(
+    std::vector<unsigned int> transaction_ids, 
+    std::forward_list<unsigned int>& transaction_chronology) {
+
+  unsigned int most_recent_transaction_id = 0;
+
+  auto prev = transaction_chronology.before_begin();
+  auto current = transaction_chronology.begin();
+
+  while (current != transaction_chronology.end()) {
+    if (std::find(transaction_ids.begin(), transaction_ids.end(), *current) != transaction_ids.end()) {
+      most_recent_transaction_id = *current;
+      transaction_chronology.erase_after(prev);
+      break;
+    }
+    prev = current;
+    ++current;
+  }
+
+  if (most_recent_transaction_id == 0) {
+    return -1;
+  }
+
   for (int i = this->size() - 1; i >= 0; i--) {
     if (this->schedule[i].get_transaction_id() == most_recent_transaction_id) {
       this->schedule.erase(this->schedule.begin() + i);
     }
   }
-  this->transaction_ids.pop_back();
+
+  this->transaction_ids.erase(
+      std::remove(this->transaction_ids.begin(), this->transaction_ids.end(), most_recent_transaction_id),
+      this->transaction_ids.end());
+
+  return most_recent_transaction_id;
 }
 
 void Schedule::set_transaction_ids(int transaction_id) {
