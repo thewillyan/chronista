@@ -11,6 +11,7 @@ namespace chronista {
 class Schedule {
 private:
   std::vector<Operation> schedule;
+  std::vector<int> transaction_ids;
 
 public:
   /// @brief Constructor for the Schedule class that initializes the schedule
@@ -31,6 +32,12 @@ public:
   std::vector<Operation> get_schedule();
   /// @brief Parse the input stream to create the schedule vector
   std::vector<Operation> parse(std::istream &input);
+  /// @brief Remove the most recent transaction from the schedule
+  void remove_most_recent_transaction(std::vector<int> transaction_ids);
+  /// @brief Set the transaction_ids attribute
+  void set_transaction_ids(int transaction_id);
+  /// @brief Getter for the transaction_ids attribute
+  std::vector<int> get_transaction_ids();
 };
 } // namespace chronista
 
