@@ -86,7 +86,9 @@ public:
   get_transaction_locks(const unsigned int &trans_id) const;
   // Get all the locks from the given transaction, given resource_id and given type.
   std::vector<std::shared_ptr<LockInfoTuple>>
-  get_transaction_locks(const unsigned int &trans_id, const unsigned int &resource_id, LockType lock_type) const;
+  get_transaction_locks(const unsigned int &trans_id, LockType lock_type) const;
+  std::vector<std::shared_ptr<LockInfoTuple>>
+  get_transaction_locks(const unsigned int &trans_id, unsigned int rsc_id, LockType lock_type) const;
   // Remove all locks from the given transaction
   void rm_transaction_locks(const unsigned int &trans_id);
 
@@ -94,9 +96,12 @@ public:
   std::vector<std::shared_ptr<LockInfoTuple>>
   get_rsc_locks(const unsigned int database_id, const unsigned int resource_id,
                 const RscType resource_type) const;
-  // Get all the locks of a given resource and given lock type
+  // Get all the locks of a given resource
   std::vector<std::shared_ptr<LockInfoTuple>>
   get_rsc_locks(const unsigned int &resource_id) const;
+  // Get all the locks of a given resource and given lock type
+  std::vector<std::shared_ptr<LockInfoTuple>>
+  get_rsc_locks(const unsigned int &resource_id, const LockType lock_type) const;
 };
 } // namespace chronista
 

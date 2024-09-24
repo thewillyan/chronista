@@ -28,17 +28,17 @@ public:
   /// string and parses it
   Operation(std::string operation);
   /// @brief Getter for operation_type
-  OperationType get_operation();
+  OperationType get_operation() const;
   /// @brief Getter for transaction_id
-  int get_transaction_id();
+  int get_transaction_id() const;
   /// @brief Getter for granularity
-  Granularity get_granularity();
+  Granularity get_granularity() const;
   /// @brief Getter for operation_string
-  std::string get_operation_string();
+  std::string get_operation_string() const;
   /// @brief Getter for full_resource_path
-  std::vector<std::tuple<Granularity, unsigned int>> get_full_resource_path();
+  std::vector<std::tuple<Granularity, unsigned int>> get_full_resource_path() const;
   /// @brief Getter for resource
-  unsigned int get_resource();
+  unsigned int get_resource() const;
   /// @brief Set the full_resource_path attribute
   void set_full_resource_path(std::string operation);
   /// @brief Set the resource attribute

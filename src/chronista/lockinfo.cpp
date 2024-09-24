@@ -66,11 +66,22 @@ LockInfo::get_transaction_locks(const unsigned int &trans_id) const {
 
 // Get all the locks from the given transaction
 std::vector<std::shared_ptr<LockInfoTuple>>
-LockInfo::get_transaction_locks(const unsigned int &trans_id, const unsigned int &resource_id, LockType lock_type) const {
+LockInfo::get_transaction_locks(const unsigned int &trans_id, LockType lock_type) const {
   std::vector<std::shared_ptr<LockInfoTuple>> v{};
   for (const auto &pair : tuples) {
     const std::shared_ptr<LockInfoTuple> &tuple_ptr = pair.second;
-    if (tuple_ptr->get_trans_id() == trans_id && tuple_ptr->get_rsc_id() == resource_id && tuple_ptr->get_lock_type() == lock_type) {
+    if (tuple_ptr->get_trans_id() == trans_id && tuple_ptr->get_lock_type() == lock_type) {
+      v.emplace_back(tuple_ptr);
+    }
+  }
+  return v;
+}
+
+std::vector<std::shared_ptr<LockInfoTuple>> LockInfo::get_transaction_locks(const unsigned int &trans_id, unsigned int rsc_id, LockType lock_type) const {
+std::vector<std::shared_ptr<LockInfoTuple>> v{};
+  for (const auto &pair : tuples) {
+    const std::shared_ptr<LockInfoTuple> &tuple_ptr = pair.second;
+    if (tuple_ptr->get_trans_id() == trans_id && tuple_ptr->get_rsc_id() == rsc_id && tuple_ptr->get_lock_type() == lock_type) {
       v.emplace_back(tuple_ptr);
     }
   }
@@ -109,13 +120,27 @@ LockInfo::get_rsc_locks(const unsigned int database_id,
   return v;
 }
 
-// Get all the locks of a given resource and given type
+// Get all the locks of a given resource
 std::vector<std::shared_ptr<LockInfoTuple>>
 LockInfo::get_rsc_locks(const unsigned int &resource_id) const {
   std::vector<std::shared_ptr<LockInfoTuple>> v{};
   for (const auto &pair : tuples) {
     const std::shared_ptr<LockInfoTuple> &tuple_ptr = pair.second;
     bool is_from_rsc = tuple_ptr->get_rsc_id() == resource_id;
+    if (is_from_rsc) {
+      v.emplace_back(tuple_ptr);
+    }
+  }
+  return v;
+}
+
+// Get all the locks of a given resource and given type
+std::vector<std::shared_ptr<LockInfoTuple>>
+LockInfo::get_rsc_locks(const unsigned int &resource_id, const LockType lock_type) const {
+  std::vector<std::shared_ptr<LockInfoTuple>> v{};
+  for (const auto &pair : tuples) {
+    const std::shared_ptr<LockInfoTuple> &tuple_ptr = pair.second;
+    bool is_from_rsc = tuple_ptr->get_rsc_id() == resource_id && tuple_ptr->get_lock_type() == lock_type;
     if (is_from_rsc) {
       v.emplace_back(tuple_ptr);
     }
