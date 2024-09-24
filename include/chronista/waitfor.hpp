@@ -9,7 +9,7 @@
 namespace chronista {
 
 class WaitForGraph {
-private:
+public:
   std::map<unsigned int, std::forward_list<unsigned int>> adjacency_lists;
 
   enum NodeStatusDFS { UNVISITED, VISITED, FINISHED };
