@@ -16,6 +16,36 @@ the operations within that schedule.
 - **Transaction Schedule Processing**: Accepts and processes various transaction schedules.
 - **Synchronization Assurance**: Ensures correct synchronization of operations to prevent data anomalies.
 
+## Usage
+
+You can run the command line interface provided by Chronista using the following syntax:
+
+```
+chronista_cli [option] [input|filename]
+```
+
+### Options
+
+- `-f [filename]` : Specify a file containing the transactions to be processed.
+- `-i` : Accept transactions from the standard input (STDIN). You can pipe data directly into the command.
+- `-h` : Display help information about the available options and usage.
+
+
+### Examples
+
+1. Using a file:
+```bash
+chronista-cli -f transactions.txt
+```
+2. Using standard input:
+```bash
+echo "transaction data" | chronista-cli -i
+```
+3. Displaying help:
+```bash
+chronista-cli -h
+```
+
 ## Build, Run and Test
 
 ### Requirements
